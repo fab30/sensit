@@ -1,0 +1,58 @@
+{
+	"ImportPath": "github.com/joelvim/sensit",
+	"GoVersion": "go1.5",
+	"Deps": [
+		{
+			"ImportPath": "github.com/armon/go-metrics",
+			"Rev": "6c5fa0d8f48f4661c9ba8709799c88d425ad20f0"
+		},
+		{
+			"ImportPath": "github.com/boltdb/bolt",
+			"Comment": "v1.0-125-g033d4ec",
+			"Rev": "033d4ec028192f38aef67ae47bd7b89f343145b5"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-26-gf7ebb76",
+			"Rev": "f7ebb761e83e21225d1d8954fde853bf8edd46c4"
+		},
+		{
+			"ImportPath": "github.com/gogo/protobuf/proto",
+			"Comment": "v0.1-48-gdf65e0b",
+			"Rev": "df65e0b667d9cb6578785fc18df94b089d320d91"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "e444e69cbd2e2e3e0749a2f3c717cec491552bbf"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/go-msgpack/codec",
+			"Rev": "fa3f63826f7c23912c15263591e65d54d080b458"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/raft",
+			"Rev": "9dabbbab966c04a0b6efed3cff6960299fed0642"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/raft-boltdb",
+			"Rev": "d1e82c1ec3f15ee991f7cc7ffd5b67ff6f5bbaee"
+		},
+		{
+			"ImportPath": "github.com/influxdb/influxdb",
+			"Comment": "v0.9.4-rc1-49-g23e6fb8",
+			"Rev": "23e6fb84db98cc33932cc19a66adf75cabdaca65"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/bcrypt",
+			"Rev": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/blowfish",
+			"Rev": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec"
+		}
+	]
+}

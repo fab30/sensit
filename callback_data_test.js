@@ -1,0 +1,37 @@
+{
+  "id":"1",
+  "serial_number":"BC123",
+  "sensors":[
+    {
+      "id":"1",
+      "history":[
+        {"data":"40.5","date":"2015-04-30T14:02Z"},
+        {"data":"23.5:32.5","date_period":"2015-04-29T14:02Z","date":"2015-04-30T14:02Z"}
+      ],
+      "sensor_type":"temperature"
+    },{
+      "id":"2",
+      "history":[
+        {"data":"2:20","date_period":"2015-04-29T14:02Z","date":"2015-04-30T14:02Z"},
+        {"data":"20","date_period":"2015-04-29T14:02Z","date":"2015-04-30T14:02Z"}
+      ],
+      "sensor_type":"motion"
+    },{
+      "id":"3",
+      "history":[
+      	{"data":"2:22:20:21","date_period":"2015-04-29T14:02Z","date":"2015-04-30T14:02Z"},
+        {"data":"22:20:21","date_period":"2015-04-29T14:02Z","date":"2015-04-30T14:02Z"}
+      ],
+      "sensor_type":"sound"
+    },{
+      "id":"4",
+      "history":[
+      	{"date":"2015-04-30T14:02Z"}
+      ],
+      "sensor_type":"button"
+    }
+  ],
+  "activation_date":"2015-01-08T12:33Z",
+  "last_comm_date":"2015-04-30T14:02Z",
+  "mode":"0"
+}
