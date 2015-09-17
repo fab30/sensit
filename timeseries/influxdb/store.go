@@ -4,6 +4,7 @@ package influxdb
 import (
 	"fmt"
 	"net/url"
+	"log"
 
 	"github.com/influxdb/influxdb/client"
 	"github.com/joelvim/sensit/measure"
@@ -14,7 +15,7 @@ const (
 	temperatureMeasurement = "temperature"
 	deviceTag              = "device"
 	valueField             = "value"
-	secondsPrecision       = "s"
+	minutePrecision       = "m"
 	defaultRetentionPolicy = "default"
 )
 
@@ -50,8 +51,8 @@ func (db InfluxDB) StoreMeasures(measures []measure.Measure) error {
 	points := make([]client.Point, len(measures))
 
 	// convert measures to points
-	for index := range measures {
-		points[index] = measureToPoint(measures[index])
+	for index, measure := range measures {
+		points[index] = measureToPoint(measure)
 	}
 
 	batch := client.BatchPoints{
@@ -60,8 +61,12 @@ func (db InfluxDB) StoreMeasures(measures []measure.Measure) error {
 		RetentionPolicy: defaultRetentionPolicy,
 	}
 
+	log.Printf("Going to write %s", batch)
+
 	// Write the batch
-	_, err := db.client.Write(batch)
+	response, err := db.client.Write(batch)
+	log.Printf("InfluxDB response %v", response)
+
 	return err
 }
 
@@ -75,6 +80,6 @@ func measureToPoint(measure measure.Measure) client.Point {
 			valueField: measure.Value,
 		},
 		Time:      measure.Time,
-		Precision: secondsPrecision,
+		Precision: minutePrecision,
 	}
 }

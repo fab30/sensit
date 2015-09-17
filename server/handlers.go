@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/joelvim/sensit/callbacks"
 	"github.com/joelvim/sensit/timeseries"
 )
@@ -17,22 +16,21 @@ type requestHandler func(w http.ResponseWriter, r *http.Request)
 // It takes a connnection to a timeseries DB and returns a handler
 func Temperature(database timeseries.DB, login, password string) func(w http.ResponseWriter, r *http.Request) {
 	return basicAuthHandler(login, password, func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		deviceID := vars["deviceID"]
 
 		// Parse the callback to extract the measures
-		if measures, err := callbacks.ParseMeasures(deviceID, r.Body); err == nil {
-
-			// Store the measures
-			err = database.StoreMeasures(measures)
-
-			if err != nil {
-				log.Printf("Error storing measures : %s", err)
-				http.Error(w, errors.New("Cannot store measure").Error(), 500)
-			}
-		} else {
+		measures, err := callbacks.ParseMeasures(r.Body)
+		if err != nil {
 			log.Printf("Error parsing measures : %s", err)
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		// Log the converted measures
+		log.Printf("Measures : len=%d cap=%d %v\n", len(measures), cap(measures), measures)
+
+		// Store the measures
+		if err = database.StoreMeasures(measures); err != nil {
+			log.Printf("Error storing measures : %s", err)
+			http.Error(w, errors.New("Cannot store measure").Error(), http.StatusInternalServerError)
 		}
 	})
 }

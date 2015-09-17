@@ -31,7 +31,7 @@ func NewRouter(db timeseries.DB, login, password string) *mux.Router {
 		Route{
 			"Temperature",
 			"POST",
-			"/api/v1/{deviceID}/temperature",
+			"/api/v1/temperature",
 			Temperature(db, login, password),
 		},
 	}

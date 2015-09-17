@@ -21,13 +21,34 @@ You can checkout the code with a `git clone` or with a
 To build the executable, enter
 
     cd $GOPATH/github.com/joelvim/sensit
-    go build
+    godep go build
 
 You should get the `sensit` command in the folder.
 
 If you want to install the sensit command in your path, run :
 
     cd $GOPATH/github.com/joelvim/sensit
-    go install
+    godep go install
 
 This command will compile the executable and copy it in the `$GOPATH/bin` directory. Just add this directory in your `$PATH` env variable, and play with it.
+
+## Usage
+
+The command is documented, just type `sensit -h` to get the help.
+
+## HTTP API
+
+The server provides 2 endpoints
+
+    /ping #healthcheck your app
+    /api/v1/temperature #receive the metrics.
+
+## What's missing
+
+* __SSL Support__ : the application does not support SSL but is targeted to be behind a proxy like nginx or Apache HTTP.
+* __Support for other metrics__ than temperature
+* __Support for periodic callback types__ : agregation is made by the TSDB, we don't need preagregated data.
+
+## Coming soon (or later)
+
+Command to import the history by extracting it from the [Sensit API](https://api.sensit.io).

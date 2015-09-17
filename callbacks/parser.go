@@ -9,67 +9,63 @@ import (
 	"log"
 	"strconv"
 	"time"
+	"fmt"
 
 	"github.com/joelvim/sensit/measure"
 )
 
 // ParseMeasures extracts the measures from the callback
-func ParseMeasures(deviceID string, body io.Reader) ([]measure.Measure, error) {
-	var f interface{}
+func ParseMeasures(body io.Reader) ([]measure.Measure, error) {
+	callback := new(callbackMessage)
 	decoder := json.NewDecoder(body)
-	err := decoder.Decode(&f)
+	err := decoder.Decode(callback)
 	if err != nil {
 		return nil, err
 	}
 
-	m := f.(map[string]interface{})
+	log.Printf("Parsed callback : %s", callback)
 
-	if m["sensors"] == nil {
-		return nil, errors.New("Invalid JSON content")
+	if callback.Mode != "1" && callback.Mode != "4" {
+		return nil, fmt.Errorf("Invalid mode %s", callback.Mode)
 	}
 
-	//sensors is an array of objects
-	sensors := m["sensors"].([]interface{})
+	if callback.Sensors == nil {
+		return nil, errors.New("Invalid JSON content")
+	}
 
 	var measures []measure.Measure
 
 	// Iterate over the sensors array...
-	for sensorIndex := range sensors {
-		sensor := sensors[sensorIndex].(map[string]interface{})
+	for _, sensor := range callback.Sensors {
 		// ... and filter it to keep only temperature
-		if sensor["sensor_type"] == "temperature" {
-			history := sensor["history"].([]interface{})
-			for measureIndex := range history {
-				entry := history[measureIndex].(map[string]interface{})
-				// Exclude the entries with a date period, we are only interested by periodic entries
-				if entry["date_period"] == nil {
-					jsonDate := entry["date"]
-					data := entry["data"]
+		if sensor.SensorType == temperatureSensorType {
+			for _, entry := range sensor.History {
+				jsonDate := entry.Date
+				data := entry.Data
 
-					if jsonDate != nil && data != nil {
+				if jsonDate != "" && data != "" {
 
-						time, errTime := time.Parse("2006-01-02T15:04Z", jsonDate.(string))
-						value, errValue := strconv.ParseFloat(data.(string), 32)
+					time, errTime := time.Parse(jsonCallbackTimeFormat, jsonDate)
+					value, errValue := strconv.ParseFloat(data, 32)
 
-						// Error handling, still shitty
-						if errTime != nil {
-							log.Printf("Cannot parse measure time: %s", errTime)
-						}
+					// Error handling, still shitty
+					if errTime != nil {
+						log.Printf("Cannot parse measure time: %s", errTime)
+					}
 
-						if errValue != nil {
-							log.Printf("Cannot parse value: %s", errValue)
-						}
+					if errValue != nil {
+						log.Printf("Cannot parse value: %s", errValue)
+					}
 
-						if errTime == nil && errValue == nil {
-							measures = append(measures, measure.Measure{deviceID, float32(value), time})
-						}
-					} else {
-						if jsonDate == nil {
-							log.Print("Date field not found")
-						}
-						if data == nil {
-							log.Print("Value field not found")
-						}
+					if errTime == nil && errValue == nil {
+						measures = append(measures, measure.Measure{callback.SerialNumber, float32(value), time})
+					}
+				} else {
+					if jsonDate == "" {
+						log.Print("Date field not found")
+					}
+					if data == "" {
+						log.Print("Value field not found")
 					}
 				}
 			}
@@ -77,4 +73,30 @@ func ParseMeasures(deviceID string, body io.Reader) ([]measure.Measure, error) {
 	}
 
 	return measures, nil
+}
+
+const (
+	temperatureSensorType  = "temperature"
+	jsonCallbackTimeFormat = "2006-01-02T15:04Z"
+)
+
+type callbackMessage struct {
+	ID             string `json:"id"`
+	SerialNumber   string `json:"serial_number"`
+	ActivationDate string `json:"activation_date"`
+	LastCommDate   string `json:"last_comm_date"`
+	Mode           string `json:"mode"`
+
+	Sensors []sensor `json:"sensors"`
+}
+
+type sensor struct {
+	ID         string    `json:"id"`
+	SensorType string    `json:"sensor_type"`
+	History    []data    `json:"history"`
+}
+
+type data struct {
+	Data string `json:"data"`
+	Date string `json:"date"`
 }
