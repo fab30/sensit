@@ -15,7 +15,7 @@ import (
 // displays the credentials in cleartext, implementing a complex and
 // as-secure-as-possible auth solution is useless
 type HTTPConfig struct {
-	ListenPort int    `json:"port"`
+	ListenPort int    `json:"-"`
 	Login      string `json:"login"`
 	Password   string `json:"password"`
 }

@@ -19,6 +19,8 @@ func HTTPServer(c *cli.Context) {
 		return
 	}
 
+	config.HTTP.ListenPort = c.Int("http-port")
+
 	// Serve the API
 	server.API(config.DB, config.HTTP)
 }

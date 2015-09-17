@@ -31,6 +31,13 @@ func main() {
 			Name:   "daemon",
 			Usage:  "launch the http server that receives data from the sensit server",
 			Action: commands.HTTPServer,
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:  "http-port",
+					Value: 8080,
+					Usage: "path to the configuration file",
+				},
+			},
 		},
 		{
 			Name:   "init",

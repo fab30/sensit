@@ -13,7 +13,6 @@ import (
 )
 
 const (
-	defaultHTTPPort       = 8080
 	defaultTimeseriesDB   = "sensit"
 	defaultTimeseriesHost = "localhost"
 	defaultTimeseriesPort = 8086 // default IndexDB port
@@ -57,15 +56,15 @@ func InitConfig(c *cli.Context) {
 	errFile := ioutil.WriteFile(absolutePath, jsonConfig, defaultConfigFileMode)
 	if errFile != nil {
 		log.Fatalf("Could not write config to file %s : %s", absolutePath, errFile)
+		return
 	}
+	log.Printf("Successfuly wrote config file at %s", absolutePath)
 }
 
 // DefaultConfig returns an application config filled with default values
 func defaultConfig() *ApplicationConfig {
 	return &ApplicationConfig{
-		HTTP: server.HTTPConfig{
-			ListenPort: defaultHTTPPort,
-		},
+		HTTP: server.HTTPConfig{},
 		DB: timeseries.DBConfig{
 			Host:     defaultTimeseriesHost,
 			Port:     defaultTimeseriesPort,
@@ -77,15 +76,15 @@ func defaultConfig() *ApplicationConfig {
 func parseConfig(configPath string) (*ApplicationConfig, error) {
 	file, err := os.Open(configPath)
 	defer file.Close()
-	if err == nil {
-		decoder := json.NewDecoder(file)
-		configuration := defaultConfig()
-
-		err = decoder.Decode(configuration)
-		if err != nil {
-			return nil, err
-		}
-		return configuration, nil
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+	decoder := json.NewDecoder(file)
+	configuration := defaultConfig()
+
+	err = decoder.Decode(configuration)
+	if err != nil {
+		return nil, err
+	}
+	return configuration, nil
 }
