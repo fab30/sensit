@@ -30,32 +30,33 @@ type ApplicationConfig struct {
 
 // InitConfig command initiailize the config file
 func InitConfig(c *cli.Context) {
-	// Create the default config
-	defaultConfig := defaultConfig()
-
-	jsonConfig, err := json.MarshalIndent(defaultConfig, "", "    ")
-
-	if err != nil {
-		log.Fatalf("Could not generate json : %s", err)
-		return
-	}
 	// Parse the path
 	configPath := c.GlobalString("config")
-	if absolutePath, pathErr := filepath.Abs(configPath); pathErr == nil {
 
-		dir := filepath.Dir(absolutePath)
-		err = os.MkdirAll(dir, defaultConfigFolderMode)
-		if err != nil {
-			log.Fatalf("Could not create directory for %s", absolutePath)
-			return
-		}
+	log.Printf("Initializing config at %s", configPath)
 
-		err = ioutil.WriteFile(absolutePath, jsonConfig, defaultConfigFileMode)
-		if err != nil {
-			log.Fatalf("Could not write config to file %s : %s", absolutePath, err)
-		}
-	} else {
-		log.Fatalf("Could not get config path %s", pathErr)
+	absolutePath, pathErr := filepath.Abs(configPath)
+	if pathErr != nil {
+		log.Fatalf("Could not get asbolute path for config path %s : %s", configPath, pathErr)
+		return
+	}
+
+	dir := filepath.Dir(absolutePath)
+	errMkDir := os.MkdirAll(dir, defaultConfigFolderMode)
+	if errMkDir != nil {
+		log.Fatalf("Could not create directory for %s : %s", absolutePath, errMkDir)
+		return
+	}
+	// Create the default config
+	defaultConfig := defaultConfig()
+	jsonConfig, errJSON := json.MarshalIndent(defaultConfig, "", "    ")
+	if errJSON != nil {
+		log.Fatalf("Could not generate json : %s", errJSON)
+		return
+	}
+	errFile := ioutil.WriteFile(absolutePath, jsonConfig, defaultConfigFileMode)
+	if errFile != nil {
+		log.Fatalf("Could not write config to file %s : %s", absolutePath, errFile)
 	}
 }
 

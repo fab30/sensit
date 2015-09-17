@@ -18,9 +18,10 @@ func main() {
 	// List the global flags of the application
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "config, c",
-			Value: "config.json",
-			Usage: "path to the configuration file",
+			Name:   "config, c",
+			Value:  "config.json",
+			Usage:  "path to the configuration file",
+			EnvVar: "SENSIT_CONFIG",
 		},
 	}
 
