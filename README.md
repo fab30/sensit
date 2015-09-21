@@ -52,4 +52,3 @@ The server provides 2 endpoints
 ## Coming soon (or later)
 
 * Command to import the history by extracting it from the [Sensit API](https://api.sensit.io).
-* Docker support

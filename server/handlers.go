@@ -22,6 +22,7 @@ func Temperature(database timeseries.DB, login, password string) func(w http.Res
 		if err != nil {
 			log.Printf("Error parsing measures : %s", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		// Log the converted measures
@@ -31,6 +32,7 @@ func Temperature(database timeseries.DB, login, password string) func(w http.Res
 		if err = database.StoreMeasures(measures); err != nil {
 			log.Printf("Error storing measures : %s", err)
 			http.Error(w, errors.New("Cannot store measure").Error(), http.StatusInternalServerError)
+			return
 		}
 	})
 }
