@@ -19,7 +19,7 @@ type Route struct {
 type Routes []Route
 
 // NewRouter builds the application http router. It takes a timeseries.DB connection
-func NewRouter(db timeseries.DB, login, password string) *mux.Router {
+func NewRouter(db timeseries.DB, authHandler AuthHandler) *mux.Router {
 
 	var routes = Routes{
 		Route{
@@ -32,7 +32,7 @@ func NewRouter(db timeseries.DB, login, password string) *mux.Router {
 			"Temperature",
 			"POST",
 			"/api/v1/temperature",
-			Temperature(db, login, password),
+			Temperature(db, authHandler),
 		},
 	}
 

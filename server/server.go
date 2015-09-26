@@ -16,6 +16,7 @@ import (
 // as-secure-as-possible auth solution is useless
 type HTTPConfig struct {
 	ListenPort int    `json:"-"`
+	AuthType   string `json:"authType"`
 	Login      string `json:"login"`
 	Password   string `json:"password"`
 	Salt       string `json:"salt"`
@@ -37,7 +38,18 @@ func API(dbConfig timeseries.DBConfig, httpConfig HTTPConfig) {
 		log.Fatalf("Could not connect influxdb : %s", err)
 	}
 
-	router := NewRouter(db, httpConfig.Login, httpConfig.Password)
+	var authHandler AuthHandler
+	switch httpConfig.AuthType {
+	case "Basic":
+		authHandler = BasicAuthHandler{httpConfig.Login, httpConfig.Password}
+	case "Token":
+		authHandler = TokenAuthHandler{httpConfig.Login, httpConfig.Password, httpConfig.Salt}
+	default:
+		log.Fatalf("Unknown authentication method : %s", httpConfig.AuthType)
+		return
+	}
+
+	router := NewRouter(db, authHandler)
 
 	boundAddress := fmt.Sprintf(":%d", httpConfig.ListenPort)
 	log.Printf("Listening on the following address : %s", boundAddress)

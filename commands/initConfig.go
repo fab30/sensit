@@ -19,6 +19,8 @@ const (
 
 	defaultConfigFileMode   = os.FileMode(0644)
 	defaultConfigFolderMode = os.FileMode(0755)
+
+	defaultAuthType = "Token"
 )
 
 // ApplicationConfig defines the format of an application config file
@@ -64,7 +66,9 @@ func InitConfig(c *cli.Context) {
 // DefaultConfig returns an application config filled with default values
 func defaultConfig() *ApplicationConfig {
 	return &ApplicationConfig{
-		HTTP: server.HTTPConfig{},
+		HTTP: server.HTTPConfig{
+			AuthType: defaultAuthType,
+		},
 		DB: timeseries.DBConfig{
 			Host:     defaultTimeseriesHost,
 			Port:     defaultTimeseriesPort,

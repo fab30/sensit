@@ -14,8 +14,8 @@ type requestHandler func(w http.ResponseWriter, r *http.Request)
 
 // Temperature stores the data sent by the sensit server requests.
 // It takes a connnection to a timeseries DB and returns a handler
-func Temperature(database timeseries.DB, login, password string) func(w http.ResponseWriter, r *http.Request) {
-	return basicAuthHandler(login, password, func(w http.ResponseWriter, r *http.Request) {
+func Temperature(database timeseries.DB, authHandler AuthHandler) func(w http.ResponseWriter, r *http.Request) {
+	return authHandler.Handle(func(w http.ResponseWriter, r *http.Request) {
 
 		// Parse the callback to extract the measures
 		measures, err := callbacks.ParseMeasures(r.Body)
@@ -40,17 +40,4 @@ func Temperature(database timeseries.DB, login, password string) func(w http.Res
 // Ping handle requests by returning Pong as text/plain content
 func Ping(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Pong")
-}
-
-// basicAuthHandler is a function that decorates an hanlder to add Basic Authentication support
-func basicAuthHandler(login string, password string, handler requestHandler) requestHandler {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if l, p, ok := r.BasicAuth(); ok && l == login && p == password {
-			handler(w, r)
-		} else {
-			// Unauthorized, return a response with a header WWW-Authenticate: Basic realm="sensit receiver"
-			w.Header().Add("WWW-Authenticate", "Basic realm=\"sensit receiver\"")
-			http.Error(w, "Authentication required", http.StatusUnauthorized)
-		}
-	}
 }
