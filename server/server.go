@@ -18,6 +18,7 @@ type HTTPConfig struct {
 	ListenPort int    `json:"-"`
 	Login      string `json:"login"`
 	Password   string `json:"password"`
+	Salt       string `json:"salt"`
 }
 
 /*

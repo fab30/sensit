@@ -44,6 +44,11 @@ func main() {
 			Usage:  "init the config at the given path",
 			Action: commands.InitConfig,
 		},
+		{
+			Name:   "token",
+			Usage:  "get the authentication token for the configured credentials",
+			Action: commands.Token,
+		},
 	}
 
 	app.Run(os.Args)
