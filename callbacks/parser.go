@@ -5,11 +5,11 @@ package callbacks
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"strconv"
 	"time"
-	"fmt"
 
 	"github.com/joelvim/sensit/measure"
 )
@@ -25,7 +25,7 @@ func ParseMeasures(body io.Reader) ([]measure.Measure, error) {
 
 	log.Printf("Parsed callback : %s", callback)
 
-	if callback.Mode != "1" && callback.Mode != "4" {
+	if callback.Mode != 1 && callback.Mode != 4 {
 		return nil, fmt.Errorf("Invalid mode %s", callback.Mode)
 	}
 
@@ -85,15 +85,15 @@ type callbackMessage struct {
 	SerialNumber   string `json:"serial_number"`
 	ActivationDate string `json:"activation_date"`
 	LastCommDate   string `json:"last_comm_date"`
-	Mode           string `json:"mode"`
+	Mode           int    `json:"mode"`
 
 	Sensors []sensor `json:"sensors"`
 }
 
 type sensor struct {
-	ID         string    `json:"id"`
-	SensorType string    `json:"sensor_type"`
-	History    []data    `json:"history"`
+	ID         string `json:"id"`
+	SensorType string `json:"sensor_type"`
+	History    []data `json:"history"`
 }
 
 type data struct {
